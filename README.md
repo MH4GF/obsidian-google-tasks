@@ -67,6 +67,18 @@ Shows a list of all undone tasks selecting one will complete the task
 
 Will open a popup to create a new task
 
+#### Create Google Tasks and insert it
+
+Will open a popup to create a new task and insert it into the current file
+
+#### Insert Uncompleted Google Tasks
+
+Will insert a list of all undone tasks into the current file. Checking the task inside the file will complete / incomplete it.
+
 #### Insert Google Tasks
 
-Will insert a lost of all undone tasks into the current file. Checking the task inside the File will complete / incomplete it.
+Will open a modal to select tasks to insert into the current file. Checking the task inside the file will complete / incomplete it.
+
+#### Copy Google Refresh Token to Clipboard
+
+Copies the Google Refresh Token to clipboard. Useful for setting up the plugin on mobile devices.
