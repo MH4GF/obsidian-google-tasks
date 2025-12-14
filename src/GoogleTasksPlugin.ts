@@ -1,7 +1,7 @@
 import { getRT } from './helper/LocalStorage';
 import { Editor, MarkdownView, Plugin, WorkspaceLeaf, moment, Notice, TFile } from "obsidian";
 import type { GoogleTasksSettings } from "./helper/types";
-import { getAllUncompletedTasksOrderdByDue, getOneTaskById } from "./googleApi/ListAllTasks";
+import { getAllTasks, getAllUncompletedTasksOrderdByDue, getOneTaskById } from "./googleApi/ListAllTasks";
 import {
 	GoogleCompleteTaskById,
 	GoogleUnCompleteTaskById,
@@ -253,6 +253,44 @@ export default class GoogleTasks extends Plugin {
 			},
 		});
 
+		// Insert today's uncompleted tasks without modal
+		const writeTodaysTodoIntoFile = async (editor: Editor) => {
+			const today = window.moment();
+			const startOfDay = today.clone().startOf('day');
+			const endOfDay = today.clone().endOf('day');
+
+			const allTasks = await getAllTasks(this, startOfDay, endOfDay);
+			const uncompletedTasks = allTasks.filter((task) => !task.completed);
+
+			uncompletedTasks.forEach((task) => {
+				editor.replaceRange(
+					taskToList(task),
+					editor.getCursor()
+				);
+			});
+		};
+
+		this.addCommand({
+			id: "insert-todays-uncompleted-google-tasks",
+			name: "Insert Today's Uncompleted Google Tasks",
+			editorCheckCallback: (
+				checking: boolean,
+				editor: Editor,
+				view: MarkdownView
+			): boolean => {
+				const canRun = settingsAreCompleteAndLoggedIn(this, false);
+
+				if (checking) {
+					return canRun;
+				}
+
+				if (!canRun) {
+					return;
+				}
+
+				writeTodaysTodoIntoFile(editor);
+			},
+		});
 
 		//Copy Refresh token to clipboard
 		this.addCommand({
